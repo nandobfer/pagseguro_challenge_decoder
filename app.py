@@ -9,7 +9,7 @@ class Challenge():
         self.coded = challenge['challenge']
         self.token = challenge['access_token']
         self.decoded = self.decodeChallenge(challenge)
-        self.key = RSA.importKey(input('private key: '))
+        self.key = RSA.importKey(open('private_key.pem').read())
         self.cipher = PKCS1_OAEP.new(self.key, hashAlgo=SHA256)
         self.message = self.decryptChallenge()
         
