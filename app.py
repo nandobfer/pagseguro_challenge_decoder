@@ -65,9 +65,12 @@ def generateKeys(loja, api):
         print(f"nenhuma chave encontrada para a loja {loja}, gerando agora")
         print(f"\nchave privada armazenada e pública disponilizada na url:")
         print(data['url'])
-        input("\npressione enter para continuar APÓS inserir a url no site da pagseguro")
+        input("\nAPÓS inserir a url no site da pagseguro, pressione enter")
     else:
-        print("chaves já criadas")
+        print("chaves já criadas, insera a url no site:")
+        print(data['url'])
+        input("\nAPÓS inserir a url no site da pagseguro, pressione enter")
+
     return data['keys']
 
 api = "http://app.agenciaboz.com.br:4001"
