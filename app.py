@@ -26,7 +26,7 @@ class Challenge():
         return decrypted
         
     def getKeys(self):
-        print('\ngetting keys')
+        print('getting keys')
         print(datetime.now())
         response = requests.post("https://api.pagseguro.com/certificates", headers={
             'Authorization': f'Bearer {self.token}',
@@ -58,7 +58,7 @@ handler = Challenge(challenge)
 
 keys = handler.getKeys()
 
-print(f'saving keys at certificate/`{loja}.json`')
+print(f'\nsaving keys at certificate/`{loja}.json`')
 try:
     json.dump(keys, open(f'certificates/{loja}.json', 'w'), indent = 4)
     print('success')
