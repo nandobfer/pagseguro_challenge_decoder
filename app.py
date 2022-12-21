@@ -5,11 +5,11 @@ from datetime import datetime
 import base64, requests, json, os
 
 class Challenge():
-    def __init__(self, challenge) -> None:
+    def __init__(self, challenge, key) -> None:
         self.coded = challenge['challenge']
         self.token = challenge['access_token']
         self.decoded = self.decodeChallenge(challenge)
-        self.key = RSA.importKey(open('private_key.pem').read())
+        self.key = RSA.importKey(decodePrivateKey(key))
         self.cipher = PKCS1_OAEP.new(self.key, hashAlgo=SHA256)
         self.message = self.decryptChallenge()
         
@@ -34,6 +34,11 @@ class Challenge():
         })
         return json.loads(response.text)
         
+
+def decodePrivateKey(key):
+    key = key.split('-----BEGIN PRIVATE KEY-----')[1]
+    key = key.split('-----END PRIVATE KEY-----')[0]
+    return base64.b64decode(key)
         
 def getChallenge(token):
     print("getting challenge")
@@ -50,17 +55,37 @@ def getChallenge(token):
 
     return json.loads(response.text)
 
+def generateKeys(loja, api):
+    print('verificando chaves')
+    
+    response = requests.post(f"{api}/api/v1/bapka/mottu/pagseguro/new_keys", json={"loja": loja})
+    data = json.loads(response.text)
+    
+    if 'url' in data:
+        print(f"nenhuma chave encontrada para a loja {loja}, gerando agora")
+        print(f"\nchave privada armazenada e pública disponilizada na url:")
+        print(data['url'])
+        input("\npressione enter para continuar APÓS inserir a url no site da pagseguro")
+    else:
+        print("chaves já criadas")
+    return data['keys']
+
+# api = "https://app.agenciaboz.com.br:4000"
+api = "http://localhost:4001"
 loja = input('loja: ')
 token = input('token: ')
+
+keys = generateKeys(loja, api)
+
 challenge = getChallenge(token)
 
-handler = Challenge(challenge)
+handler = Challenge(challenge, keys['private'])
 
-keys = handler.getKeys()
+pagseguro_keys = handler.getKeys()
 
 print(f'\nsaving keys at certificate/`{loja}.json`')
 try:
-    json.dump(keys, open(f'certificates/{loja}.json', 'w'), indent = 4)
+    json.dump(pagseguro_keys, open(f'certificates/{loja}.json', 'w'), indent = 4)
     print('success')
 except Exception as error:
     print(error)
