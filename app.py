@@ -61,13 +61,13 @@ def generateKeys(loja, api):
     response = requests.post(f"{api}/api/v1/bapka/mottu/pagseguro/new_keys", json={"loja": loja})
     data = json.loads(response.text)
     
-    if 'url' in data:
+    if 'new' in data:
         print(f"nenhuma chave encontrada para a loja {loja}, gerando agora")
         print(f"\nchave privada armazenada e pública disponilizada na url:")
         print(data['url'])
         input("\nAPÓS inserir a url no site da pagseguro, pressione enter")
     else:
-        print("chaves já criadas, insera a url no site:")
+        print("\nchaves já criadas, insera a url no site:")
         print(data['url'])
         input("\nAPÓS inserir a url no site da pagseguro, pressione enter")
 
