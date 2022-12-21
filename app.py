@@ -70,8 +70,8 @@ def generateKeys(loja, api):
         print("chaves já criadas")
     return data['keys']
 
-# api = "https://app.agenciaboz.com.br:4000"
-api = "http://localhost:4001"
+api = "http://app.agenciaboz.com.br:4001"
+# api = "http://localhost:4001"
 loja = input('loja: ')
 token = input('token: ')
 
