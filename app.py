@@ -55,10 +55,10 @@ def getChallenge(token):
 
     return json.loads(response.text)
 
-def generateKeys(loja, api):
+def generateKeys(loja, api, cliente):
     print('verificando chaves')
     
-    response = requests.post(f"{api}/api/v1/bapka/mottu/pagseguro/new_keys", json={"loja": loja})
+    response = requests.post(f"{api}/api/v1/{cliente}/pagseguro/new_keys", json={"loja": loja})
     data = json.loads(response.text)
     
     if 'new' in data:
@@ -75,10 +75,11 @@ def generateKeys(loja, api):
 
 api = "http://app.agenciaboz.com.br:4001"
 # api = "http://localhost:4001"
+cliente = input('cliente: (bapka/mottu - sbop) ')
 loja = input('loja: ')
 token = input('token: ')
 
-keys = generateKeys(loja, api)
+keys = generateKeys(loja, api, cliente)
 
 challenge = getChallenge(token)
 
