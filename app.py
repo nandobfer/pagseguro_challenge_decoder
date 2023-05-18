@@ -55,14 +55,16 @@ def getChallenge(token):
 
     return json.loads(response.text)
 
-def generateKeys(loja, api, cliente):
+def generateKeys(api):
     print('verificando chaves')
-    
-    response = requests.post(f"{api}/api/v1/{cliente}/pagseguro/new_keys", json={"loja": loja})
+    url = f"{api}/pagseguro/new_keys"
+    print(url)
+    response = requests.get(url)
+    print(response.text)
     data = json.loads(response.text)
     
     if 'new' in data:
-        print(f"nenhuma chave encontrada para a loja {loja}, gerando agora")
+        print(f"nenhuma chave encontrada, gerando agora")
         print(f"\nchave privada armazenada e pública disponilizada na url:")
         print(data['url'])
         input("\nAPÓS inserir a url no site da pagseguro, pressione enter")
@@ -73,13 +75,14 @@ def generateKeys(loja, api, cliente):
 
     return data['keys']
 
-api = "http://app.agenciaboz.com.br:4001"
+port = input('api port: ')
+api = f"https://app.agenciaboz.com.br:{port}/api"
+print(api)
+client_name = input('client name: ')
 # api = "http://localhost:4001"
-cliente = input('cliente: (bapka/mottu - sbop) ')
-loja = input('loja: ')
 token = input('token: ')
 
-keys = generateKeys(loja, api, cliente)
+keys = generateKeys(api)
 
 challenge = getChallenge(token)
 
@@ -87,9 +90,9 @@ handler = Challenge(challenge, keys['private'])
 
 pagseguro_keys = handler.getKeys()
 
-print(f'\nsaving keys at certificate/`{loja}.json`')
+print(f'\nsaving keys at certificate/`{client_name}.json`')
 try:
-    json.dump(pagseguro_keys, open(f'certificates/{loja}.json', 'w'), indent = 4)
+    json.dump(pagseguro_keys, open(f'certificates/{client_name}.json', 'w'), indent = 4)
     print('success')
 except Exception as error:
     print(error)
