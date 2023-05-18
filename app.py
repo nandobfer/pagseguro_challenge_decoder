@@ -77,7 +77,7 @@ def generateKeys(api):
 
 port = input('api port: ')
 api = f"https://app.agenciaboz.com.br:{port}/api"
-print(api)
+input(f"{api} ?")
 client_name = input('client name: ')
 # api = "http://localhost:4001"
 token = input('token: ')
@@ -89,6 +89,8 @@ challenge = getChallenge(token)
 handler = Challenge(challenge, keys['private'])
 
 pagseguro_keys = handler.getKeys()
+pagseguro_keys['api'] = api
+pagseguro_keys['token'] = token
 
 print(f'\nsaving keys at certificate/`{client_name}.json`')
 try:
