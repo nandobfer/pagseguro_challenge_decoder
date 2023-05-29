@@ -2,7 +2,7 @@ from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA256
 from datetime import datetime
-import base64, requests, json, os
+import base64, requests, json, os, sys
 
 class Challenge():
     def __init__(self, challenge, key) -> None:
@@ -28,7 +28,7 @@ class Challenge():
     def getKeys(self):
         print('getting keys')
         print(datetime.now())
-        response = requests.post("https://api.pagseguro.com/certificates", headers={
+        response = requests.post(f"{url}/certificates", headers={
             'Authorization': f'Bearer {self.token}',
             'X_CHALLENGE': str(self.message)
         })
@@ -42,7 +42,7 @@ def decodePrivateKey(key):
         
 def getChallenge(token):
     print("getting challenge")
-    response = requests.post("https://api.pagseguro.com/oauth2/token", headers={
+    response = requests.post(f"{url}/oauth2/token", headers={
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {token}',
@@ -75,6 +75,9 @@ def generateKeys(api):
 
     return data['keys']
 
+sandbox = sys.argv[1] == '--sandbox' if len(sys.argv) > 1 else False
+url = "https://sandbox.api.pagseguro.com" if sandbox else "https://api.pagseguro.com"
+
 port = input('api port: ')
 api = f"https://app.agenciaboz.com.br:{port}/api"
 input(f"{api} ?")
@@ -88,9 +91,11 @@ challenge = getChallenge(token)
 
 handler = Challenge(challenge, keys['private'])
 
+
 pagseguro_keys = handler.getKeys()
 pagseguro_keys['api'] = api
 pagseguro_keys['token'] = token
+pagseguro_keys['url'] = url
 
 print(f'\nsaving keys at certificate/`{client_name}.json`')
 try:

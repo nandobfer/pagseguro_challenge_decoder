@@ -3,7 +3,7 @@ import requests, json
 client = input('client name: ')
 cert = json.load(open(f'certificates/{client}.json'))
 
-url = "https://api.pagseguro.com/oauth2/application"
+url = cert['url']+"/oauth2/application"
 
 payload = {"name": client}
 headers = {
