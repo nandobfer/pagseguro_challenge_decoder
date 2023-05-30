@@ -1,5 +1,7 @@
 import requests, json
 
+# DOCUMENTAÇÃO https://dev.pagseguro.uol.com.br/reference/create-order
+
 client = input('client name: ')
 cert = json.load(open(f'certificates/{client}.json'))
 
